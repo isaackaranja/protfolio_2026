@@ -1,0 +1,126 @@
+:root {
+  /* Change --accent to retheme. Alternatives from the design: #0F766E, #7C3AED, #C2410C */
+  --accent: #1d4ed8;
+
+  --ink: #111418;
+  --ink-soft: #2b313a;
+  --muted: #4a525e;
+  --placeholder: #5b6370;
+  --footer-text: #9aa1ab;
+  --on-dark-muted: #b8bec7;
+
+  --bg: #ffffff;
+  --surface: #f3f4f6;
+  --surface-alt: #f7f8fa;
+  --border: #e6e8eb;
+  --border-strong: #d4d8dd;
+
+  --sans: 'Geist', system-ui, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, monospace;
+
+  --container: 1080px;
+  --gutter: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--ink);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Shared layout + type helpers */
+.container {
+  /* Content is --container wide; the gutters sit outside it, as in the design */
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.section-title {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.placeholder-box {
+  border-radius: 10px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--placeholder);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 14px 22px;
+  border-radius: 8px;
+}
+
+.btn-dark {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.btn-dark:hover {
+  color: #ffffff;
+  background: var(--ink-soft);
+}
+
+.btn-outline {
+  /* 1px less padding so outlined buttons match filled ones in size */
+  padding: 13px 21px;
+  border: 1px solid var(--border-strong);
+  color: var(--ink);
+}
+
+.btn-outline:hover {
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

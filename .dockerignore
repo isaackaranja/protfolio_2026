@@ -1,0 +1,11 @@
+node_modules
+dist
+design
+.git
+.vscode
+.DS_Store
+*.log
+Dockerfile
+compose.yaml
+.dockerignore
+server
