@@ -1,6 +1,30 @@
 <script setup>
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { PUBLIC_CV_URL, getPublicDocuments } from '../api/documents'
+import { isWebLink, loadHomepageLinks } from '../api/links'
 import { profile } from '../data/profile'
+
+// The CV chosen on /admin/documents; the button stays hidden until there is one
+const cv = ref(null)
+// Links added on /admin/links, e.g. GitHub and LinkedIn
+const links = ref([])
+
+onMounted(async () => {
+  try {
+    ;({ cv: cv.value } = await getPublicDocuments())
+  } catch {
+    // API unavailable: leave the button hidden rather than show a broken link
+  }
+})
+
+onMounted(async () => {
+  try {
+    links.value = await loadHomepageLinks()
+  } catch {
+    // API unavailable: the email link still shows
+  }
+})
 </script>
 
 <template>
@@ -32,12 +56,22 @@ import { profile } from '../data/profile'
           <path d="M12 5v14M5 12l7 7 7-7"></path>
         </svg>
       </RouterLink>
-      <a :href="profile.resumeUrl" class="btn btn-outline">Download résumé (PDF)</a>
+      <a v-if="cv" :href="PUBLIC_CV_URL" target="_blank" rel="noopener" class="btn btn-outline">
+        Download résumé{{ cv.contentType === 'application/pdf' ? ' (PDF)' : '' }}
+      </a>
     </div>
 
     <div class="socials mono">
-      <a :href="profile.githubUrl">GitHub ↗</a>
-      <a :href="profile.linkedinUrl">LinkedIn ↗</a>
+      <a
+        v-for="item in links"
+        :key="item._id"
+        :href="item.link"
+        :title="item.description || undefined"
+        :target="isWebLink(item.link) ? '_blank' : undefined"
+        rel="noopener"
+      >
+        {{ item.linkName }}{{ isWebLink(item.link) ? ' ↗' : '' }}
+      </a>
       <a :href="`mailto:${profile.email}`">{{ profile.email }}</a>
     </div>
   </section>

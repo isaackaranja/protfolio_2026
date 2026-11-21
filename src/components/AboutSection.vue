@@ -1,11 +1,31 @@
 <script setup>
+import { onMounted, ref } from 'vue'
+import { getProfilePhoto, photoUrl } from '../api/profilePhoto'
 import { about, profile } from '../data/profile'
+
+// The photo uploaded on /admin/profile; the placeholder shows until there is one
+const photo = ref(null)
+
+onMounted(async () => {
+  try {
+    ;({ photo: photo.value } = await getProfilePhoto())
+  } catch {
+    // API unavailable: keep the placeholder
+  }
+})
 </script>
 
 <template>
   <section id="about" aria-labelledby="about-title" class="about">
     <div class="container inner">
-      <img v-if="about.photo" :src="about.photo" :alt="`Photo of ${profile.name}`" class="photo" />
+      <img
+        v-if="photo"
+        :src="photoUrl(photo)"
+        :alt="`Photo of ${profile.name}`"
+        class="photo"
+        loading="lazy"
+        @error="photo = null"
+      />
       <div v-else role="img" aria-label="Photo placeholder" class="photo placeholder-box">
         [Your photo]
       </div>
@@ -34,6 +54,9 @@ import { about, profile } from '../data/profile'
 
 .photo {
   flex: 0 0 240px;
+  /* Without these, an image grows to its natural shape inside the flex row */
+  width: 240px;
+  min-width: 0;
   height: 280px;
   border-radius: 16px;
   object-fit: cover;

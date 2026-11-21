@@ -8,6 +8,7 @@ import {
   listExperience,
   updateExperience,
 } from '../api/experience'
+import { formatPeriod } from '../utils/formatPeriod'
 import './admin.css'
 
 const entries = ref([])
@@ -78,16 +79,6 @@ async function remove(entry) {
   } catch (err) {
     alert(err.message)
   }
-}
-
-// "2024-03" → "Mar 2024"
-function formatMonth(value) {
-  const [year, month] = value.split('-').map(Number)
-  return new Date(year, month - 1).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
-}
-
-function formatPeriod(entry) {
-  return `${formatMonth(entry.startDate)} — ${entry.endDate ? formatMonth(entry.endDate) : 'Present'}`
 }
 </script>
 

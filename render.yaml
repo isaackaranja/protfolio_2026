@@ -1,0 +1,50 @@
+# Render Blueprint: creates the API and the site from this repo (Render dashboard → New → Blueprint).
+# If Render gives a service a different address than the names below, update
+# CORS_ORIGIN and VITE_API_URL to match, then redeploy.
+services:
+  # Express API — https://isaac-portfolio-api.onrender.com
+  # Free plan: sleeps after ~15 minutes idle and takes up to a minute to wake.
+  - type: web
+    name: isaac-portfolio-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      # MongoDB Atlas connection string, ending in /portfolio — entered in the dashboard
+      - key: MONGODB_URI
+        sync: false
+      # Admin password — entered in the dashboard
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://isaac-portfolio.onrender.com
+
+  # Vue site — https://isaac-portfolio.onrender.com
+  - type: web
+    name: isaac-portfolio
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    # Changes inside server/ only redeploy the API
+    buildFilter:
+      ignoredPaths:
+        - server/**
+    envVars:
+      - key: VITE_API_URL
+        value: https://isaac-portfolio-api.onrender.com
+    routes:
+      # Vue Router uses history mode: every page path serves index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

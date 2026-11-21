@@ -12,6 +12,10 @@ services:
   # Express backend: http://localhost:3000/api/health
   api:
     build: ./server
+    # ADMIN_PASSWORD and SESSION_SECRET come from server/.env (see server/.env.example)
+    env_file:
+      - path: ./server/.env
+        required: false
     environment:
       MONGODB_URI: mongodb://mongo:27017/portfolio
     ports:

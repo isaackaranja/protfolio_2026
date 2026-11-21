@@ -1,10 +1,21 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { logout } from '../api/auth'
+
+const router = useRouter()
+
+function logOut() {
+  logout()
+  router.push({ name: 'admin-login' })
+}
 
 const tabs = [
   { label: 'Projects', to: '/admin/projects' },
   { label: 'Skills & tools', to: '/admin/skills' },
   { label: 'Experience', to: '/admin/experience' },
+  { label: 'CV & cover letters', to: '/admin/documents' },
+  { label: 'Profile', to: '/admin/profile' },
+  { label: 'Links', to: '/admin/links' },
 ]
 </script>
 
@@ -13,6 +24,7 @@ const tabs = [
     <RouterLink v-for="tab in tabs" :key="tab.to" :to="tab.to" class="tab">
       {{ tab.label }}
     </RouterLink>
+    <button type="button" class="tab logout" @click="logOut">Log out</button>
   </nav>
 </template>
 
@@ -37,6 +49,16 @@ const tabs = [
 
 .tab:hover {
   color: var(--ink);
+}
+
+.logout {
+  margin-left: auto;
+  font-family: inherit;
+  background: none;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+  cursor: pointer;
 }
 
 /* Vue Router adds this class to the link for the current page */

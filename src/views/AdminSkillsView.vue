@@ -2,10 +2,8 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import AdminNav from '../components/AdminNav.vue'
 import { createSkill, deleteSkill, listSkills, updateSkill } from '../api/skills'
+import { SKILL_CATEGORIES, groupSkills } from '../utils/groupSkills'
 import './admin.css'
-
-// Suggested in the category box, alongside any categories you've already used
-const SUGGESTED_CATEGORIES = ['Languages', 'Frontend', 'Backend', 'Databases', 'Tools & cloud']
 
 const skills = ref([])
 const loading = ref(true)
@@ -22,19 +20,13 @@ const draft = reactive({ name: '', category: '' })
 const updating = ref(false)
 const updateError = ref('')
 
+// Suggested in the category box: the usual categories plus any you've already used
 const categories = computed(() => [
-  ...new Set([...SUGGESTED_CATEGORIES, ...skills.value.map(({ category }) => category)]),
+  ...new Set([...SKILL_CATEGORIES, ...skills.value.map(({ category }) => category)]),
 ])
 
-// Skills grouped by category, in the order they're sorted
-const groups = computed(() => {
-  const byCategory = new Map()
-  for (const skill of skills.value) {
-    if (!byCategory.has(skill.category)) byCategory.set(skill.category, [])
-    byCategory.get(skill.category).push(skill)
-  }
-  return [...byCategory].map(([category, items]) => ({ category, items }))
-})
+// Same grouping and category order as the homepage
+const groups = computed(() => groupSkills(skills.value))
 
 // Same order as the API: category, then name, A–Z ignoring case
 function sortSkills(list) {

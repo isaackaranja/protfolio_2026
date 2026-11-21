@@ -1,6 +1,31 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import { listContactNumbers, telHref } from '../api/contactNumbers'
+import { isWebLink, loadHomepageLinks } from '../api/links'
+import { request } from '../api/request'
 import { profile } from '../data/profile'
+
+// Links added on /admin/links, shown as buttons next to the email button
+const links = ref([])
+
+onMounted(async () => {
+  try {
+    links.value = await loadHomepageLinks()
+  } catch {
+    // API unavailable: the email button and form still work
+  }
+})
+
+// Phone numbers added on /admin/profile
+const numbers = ref([])
+
+onMounted(async () => {
+  try {
+    numbers.value = await listContactNumbers()
+  } catch {
+    // API unavailable: leave the numbers out
+  }
+})
 
 const form = reactive({ name: '', email: '', message: '' })
 // 'idle' | 'sending' | 'sent' | 'error'
@@ -10,15 +35,7 @@ const errorText = ref('')
 async function sendMessage() {
   status.value = 'sending'
   try {
-    const res = await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    })
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      throw new Error(data.error ?? 'Could not send your message.')
-    }
+    await request('/api/messages', { method: 'POST', body: JSON.stringify(form) })
     Object.assign(form, { name: '', email: '', message: '' })
     status.value = 'sent'
   } catch (err) {
@@ -35,8 +52,25 @@ async function sendMessage() {
       <p class="text">{{ profile.contactText }}</p>
       <div class="actions">
         <a :href="`mailto:${profile.email}`" class="btn btn-light">{{ profile.email }}</a>
-        <a :href="profile.linkedinUrl" class="btn btn-ghost">LinkedIn ↗</a>
-        <a :href="profile.githubUrl" class="btn btn-ghost">GitHub ↗</a>
+        <a
+          v-for="item in numbers"
+          :key="item._id"
+          :href="telHref(item.number)"
+          class="btn btn-ghost"
+        >
+          {{ item.label }} · {{ item.number }}
+        </a>
+        <a
+          v-for="item in links"
+          :key="item._id"
+          :href="item.link"
+          :title="item.description || undefined"
+          :target="isWebLink(item.link) ? '_blank' : undefined"
+          rel="noopener"
+          class="btn btn-ghost"
+        >
+          {{ item.linkName }}{{ isWebLink(item.link) ? ' ↗' : '' }}
+        </a>
       </div>
 
       <form class="form" @submit.prevent="sendMessage">

@@ -1,8 +1,24 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
 import ProjectCard from './ProjectCard.vue'
-import { projects } from '../data/profile'
+import { listProjectSamples } from '../api/projectSamples'
 
-const count = String(projects.length).padStart(2, '0')
+// Projects added on the /admin/projects page, newest first
+const projects = ref([])
+const loading = ref(true)
+const loadError = ref(false)
+
+const count = computed(() => String(projects.value.length).padStart(2, '0'))
+
+onMounted(async () => {
+  try {
+    projects.value = await listProjectSamples()
+  } catch {
+    loadError.value = true
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -10,13 +26,22 @@ const count = String(projects.length).padStart(2, '0')
     <div class="container inner">
       <div class="heading">
         <h2 id="work-title" class="section-title">Selected work</h2>
-        <p class="count mono">{{ count }} projects</p>
+        <p v-if="!loading && !loadError" class="count mono">
+          {{ count }} {{ projects.length === 1 ? 'project' : 'projects' }}
+        </p>
       </div>
 
-      <div class="list">
+      <!-- On free hosting the API can take up to a minute to wake up -->
+      <p v-if="loading" class="status" role="status">Loading projects…</p>
+      <p v-else-if="loadError" class="status">
+        Projects couldn't be loaded right now. Please refresh the page in a moment.
+      </p>
+      <p v-else-if="!projects.length" class="status">Projects coming soon.</p>
+
+      <div v-else class="list">
         <ProjectCard
           v-for="(project, index) in projects"
-          :key="index"
+          :key="project._id"
           :project="project"
           :index="index"
         />
@@ -47,6 +72,12 @@ const count = String(projects.length).padStart(2, '0')
 .count {
   margin: 0;
   font-size: 14px;
+  color: var(--muted);
+}
+
+.status {
+  margin: 0;
+  font-size: 17px;
   color: var(--muted);
 }
 

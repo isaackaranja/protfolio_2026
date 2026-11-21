@@ -1,15 +1,42 @@
 <script setup>
-import { skills } from '../data/profile'
+import { computed, onMounted, ref } from 'vue'
+import { listSkills } from '../api/skills'
+import { groupSkills } from '../utils/groupSkills'
+
+// Skills added on the /admin/skills page
+const skills = ref([])
+const loading = ref(true)
+const loadError = ref(false)
+
+const groups = computed(() => groupSkills(skills.value))
+
+onMounted(async () => {
+  try {
+    skills.value = await listSkills()
+  } catch {
+    loadError.value = true
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
   <section aria-labelledby="skills-title" class="skills">
     <div class="container inner">
       <h2 id="skills-title" class="section-title title">Skills &amp; tools</h2>
-      <div class="grid">
-        <div v-for="skill in skills" :key="skill.group" class="group">
-          <h3 class="label mono">{{ skill.group }}</h3>
-          <p class="items">{{ skill.items }}</p>
+
+      <!-- On free hosting the API can take up to a minute to wake up -->
+      <p v-if="loading" class="status" role="status">Loading skills…</p>
+      <p v-else-if="loadError" class="status">
+        Skills couldn't be loaded right now. Please refresh the page in a moment.
+      </p>
+      <p v-else-if="!groups.length" class="status">Skills coming soon.</p>
+
+      <div v-else class="grid">
+        <div v-for="group in groups" :key="group.category" class="group">
+          <h3 class="label mono">{{ group.category }}</h3>
+          <p class="items">{{ group.items.map(({ name }) => name).join(', ') }}</p>
         </div>
       </div>
     </div>
@@ -30,6 +57,12 @@ import { skills } from '../data/profile'
 
 .title {
   margin-bottom: 40px;
+}
+
+.status {
+  margin: 0;
+  font-size: 17px;
+  color: var(--muted);
 }
 
 .grid {

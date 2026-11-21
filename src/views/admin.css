@@ -72,6 +72,8 @@
 }
 
 .admin input[type='text'],
+.admin input[type='password'],
+.admin input[type='tel'],
 .admin input[type='month'],
 .admin textarea {
   font: inherit;
