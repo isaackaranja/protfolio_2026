@@ -1,6 +1,9 @@
 import express from 'express'
 import { client, connect } from './db.js'
+import { router as experienceRouter } from './routes/experience.js'
 import { router as messagesRouter } from './routes/messages.js'
+import { router as projectSamplesRouter } from './routes/projectSamples.js'
+import { router as skillsRouter } from './routes/skills.js'
 
 const port = Number(process.env.PORT ?? 3000)
 
@@ -11,7 +14,10 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true })
 })
 
+app.use('/api/experience', experienceRouter)
 app.use('/api/messages', messagesRouter)
+app.use('/api/project-samples', projectSamplesRouter)
+app.use('/api/skills', skillsRouter)
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' })

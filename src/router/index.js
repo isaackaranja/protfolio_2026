@@ -9,6 +9,22 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
     },
+    // Admin pages: not linked from the site, visit them directly
+    {
+      path: '/admin/projects',
+      name: 'admin-projects',
+      component: () => import('../views/AdminProjectsView.vue'),
+    },
+    {
+      path: '/admin/skills',
+      name: 'admin-skills',
+      component: () => import('../views/AdminSkillsView.vue'),
+    },
+    {
+      path: '/admin/experience',
+      name: 'admin-experience',
+      component: () => import('../views/AdminExperienceView.vue'),
+    },
     // Unknown paths fall back to the home page
     {
       path: '/:pathMatch(.*)*',

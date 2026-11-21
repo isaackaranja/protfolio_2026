@@ -20,6 +20,19 @@ services:
       - mongo
     restart: unless-stopped
 
+  mangodb-express:
+    image: mongo-express:1.0.0-alpha.4
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
   # MongoDB, also reachable from your Mac at mongodb://localhost:27017
   mongo:
     image: mongo:8

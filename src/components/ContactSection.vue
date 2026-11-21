@@ -174,16 +174,6 @@ async function sendMessage() {
   gap: 16px;
 }
 
-.submit .btn {
-  border: 0;
-  cursor: pointer;
-}
-
-.submit .btn:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
 .status {
   margin: 0;
   color: var(--on-dark-muted);

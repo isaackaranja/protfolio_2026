@@ -96,6 +96,15 @@ a:focus-visible {
   text-decoration: none;
   padding: 14px 22px;
   border-radius: 8px;
+  /* So <button class="btn"> looks the same as <a class="btn"> */
+  font-family: inherit;
+  border: 0;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
 }
 
 .btn-dark {
@@ -112,6 +121,7 @@ a:focus-visible {
   /* 1px less padding so outlined buttons match filled ones in size */
   padding: 13px 21px;
   border: 1px solid var(--border-strong);
+  background: transparent;
   color: var(--ink);
 }
 
