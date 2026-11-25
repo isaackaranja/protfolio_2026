@@ -8,7 +8,12 @@ const year = new Date().getFullYear()
   <footer class="footer">
     <div class="container inner">
       <p>© {{ year }} {{ profile.name }}</p>
-      <p>Built with care in {{ profile.city }}</p>
+      <p>
+        Built with Vue, Express &amp; MongoDB in {{ profile.city }}
+        <template v-if="profile.sourceUrl">
+          · <a :href="profile.sourceUrl" target="_blank" rel="noopener">Source ↗</a>
+        </template>
+      </p>
     </div>
   </footer>
 </template>
@@ -33,5 +38,13 @@ const year = new Date().getFullYear()
 
 p {
   margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: #ffffff;
 }
 </style>

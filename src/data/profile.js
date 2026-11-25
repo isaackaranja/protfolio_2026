@@ -11,6 +11,8 @@ export const profile = {
   workMode: 'Remote',
   city: 'Nairobi',
   email: 'isaackaranja1995@gmail.com',
+  // Linked from "How this site works" and the footer; leave empty to hide those links
+  sourceUrl: 'https://github.com/isaackaranja/protfolio_2026',
   contactText:
     "I'm currently looking for [full-time / contract] roles as a [role]. The quickest way to reach me is email.",
 }
